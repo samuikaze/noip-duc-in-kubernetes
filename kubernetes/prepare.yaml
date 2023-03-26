@@ -1,0 +1,18 @@
+# namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: <NAMESPACE_NAME>
+
+---
+# duc-secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <SECRET_NAME>
+  namespace: <NAMESPACE_CREATED_ABOVE>
+type: Opaque
+data:
+  username: <UERNAME_ON_NOIP>
+  password: <PASSWWORD_ON_NOIP>
+  domains: <DOMAIN_TO_SYNC>

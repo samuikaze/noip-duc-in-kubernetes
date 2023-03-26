@@ -1,0 +1,36 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <NAME_FOR_DEPLOYMENT>
+  namespace: <NAMESPACE>
+  labels:
+    app_name: <NAPE_FOR_APP>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app_name: <NAPE_FOR_APP>
+  template:
+    metadata:
+      labels:
+        app_name: <NAPE_FOR_APP>
+    spec:
+      containers:
+        - name: <NAPE_FOR_APP>
+          image: <IMAGE>
+          env:
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: noip-duc-secret
+                  key: username
+            - name: PASSWORD
+              secretKeyRef:
+                  name: noip-duc-secret
+                  key: password
+            - name: DOMAINS
+              secretKeyRef:
+                  name: noip-duc-secret
+                  key: domains
+          imagePullPolicy: Always
