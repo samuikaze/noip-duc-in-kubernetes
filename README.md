@@ -10,7 +10,7 @@ This repository describes how to run no-ip DUC in Kubernetes.
 
 ## Build image
 
-> Note: If you wnat to test image first, you can put `.env` file in `scripts` folder, container will read and set environment variables from the file.
+> Note: If you want to test image first, you can put `.env` file in `scripts` folder, container will read and set environment variables from the file.
 
 > If running in production environment, put these sensitive data in secrets is recommanded.
 
@@ -41,6 +41,8 @@ Before deploying to Kubernetes, you need to configure namespace and secrets for 
 
   DUC needs your username, password and domain to run, so you need to create a secret to define these values for DUC.
 
+  > Note: If you have multiple domains, split it in comma.
+
   ```yaml
   # duc-secrets.yaml
   apiVersion: v1
@@ -64,7 +66,6 @@ Before deploying to Kubernetes, you need to configure namespace and secrets for 
 ## References
 
 - [How to Install the Linux 3.x Dynamic Update Client (DUC)](https://www.noip.com/support/knowledgebase/install-linux-3-x-dynamic-update-client-duc/)
-- [coppit/docker-no-ip](https://github.com/coppit/docker-no-ip)
 - [How to Install the No-IP Dynamic Update Client](https://www.linuxwebzone.com/how-to-install-the-no-ip-dynamic-update-client/)
 - [Can I run a command WITHIN another command?](https://askubuntu.com/a/7407)
 - [bash how to check if file exists](https://www.masteringunixshell.net/qa14/bash-how-to-check-if-file-exists.html)
