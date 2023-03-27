@@ -4,7 +4,7 @@ This repository describes how to run no-ip DUC in Kubernetes.
 
 > **Important note**: There are some issues when building image, you need to test before using this Dockerfile to build image.
 
-> Note: This repository using no-ip DUC in beta version.
+> Note: This repository using no-ip DUC in beta version. It is incompatible with Version 2.x.
 
 > Note: Traditional Chinese readme file will add in future.
 
@@ -63,6 +63,24 @@ Before deploying to Kubernetes, you need to configure namespace and secrets for 
 
   After you edited, issue `kubectl apply -f deployment.yaml` to deploy to Kubernetes.
 
+### Using GitHub Actions
+
+  To use GitHub Actions to deploy your NoIP DUC, you need to edit `production.yml` in `.github/workflows` folder.
+  Set all secrets and vars which declares in yaml file into repository secrets and vars.
+  And change all values contains `<` and `>` with upper case alphabets to correct value.
+
+  When these are finished, you can do git commit and git push to run deployment.
+
+## Update DUC client version
+
+  > Note: Stable version of DUC, which is version 2.x, is incompatible with what this repository doing.
+
+  To update DUC client, you just need to do below three steps:
+
+  1. Change the download url in `Dockerfile` to newer version.
+  2. Build the image.
+  3. Deploy to Kubernetes and done.
+
 ## References
 
 - [How to Install the Linux 3.x Dynamic Update Client (DUC)](https://www.noip.com/support/knowledgebase/install-linux-3-x-dynamic-update-client-duc/)
@@ -76,3 +94,5 @@ Before deploying to Kubernetes, you need to configure namespace and secrets for 
 - [How to Read a File Line By Line in Bash](https://linuxize.com/post/how-to-read-a-file-line-by-line-in-bash/)
 - [Change default shell](https://wiki.alpinelinux.org/wiki/Change_default_shell)
 - [Pass args for script when going thru pipe](https://stackoverflow.com/a/53605439)
+- [How To Set Environment Variable in Bash](https://devconnected.com/set-environment-variable-bash-how-to/)
+- [How do I delete an exported environment variable?](https://stackoverflow.com/a/6877747)
