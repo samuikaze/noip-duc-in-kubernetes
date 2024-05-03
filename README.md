@@ -1,89 +1,115 @@
 # No-IP Dynamic DNS Update Client in Kubernetes
 
-This repository describes how to run No-IP DUC in Kubernetes.
+This repository will describe how to deploy No-IP DUC to Kubernetes.
 
-> Note: This repository using No-IP DUC in beta version. It is incompatible with Version 2.x.
+> [!NOTE]
+> This repository using beta version of No-IP DUC. The configuration of this version is incompatible with Version 2.x.
 
-* [中文文檔](./docs/zh-TW.md)
+- [中文文檔](./docs/zh-TW.md)
 
-## Build image
+## Table of contents
 
-> Note: If you want to test image first, you can put `.env` file in `scripts` folder before you build the image, container will read and set environment variables from the file.
+- [Building image](#building-image)
+- [Deploy to Kubernetes](#deploy-to-kubernetes)
+  - [Create namespace](#create-namespace)
+  - [Create secrets](#create-secrets)
+  - [Edit deployment file](#edit-deployment-file)
+  - [Using GitHub Actions](#using-github-actions)
+- [Update No-IP DUC client version](#update-no-ip-duc-client-version)
+- [Update configurations](#update-configurations)
+- [References](#references)
 
-> If it runs in production environment, put these sensitive data in secrets is recommanded.
+## Building image
 
-Bulid image is easy when all necessary configurations are written in Dockerfile.
-You can just run `docker build --tag <IMAGE_NAME> . --no-cache` to build image yourself.
+> [!NOTE]
+> If you want to test the image first, you can put `.env` file in `scripts` directory before you build the image, the startup script will read and set environment variables from the file.
+
+> [!WARNING]
+> It is recommanded to put these sensitive data in secret store such as Kubernetes secret if No-IP DUC runs in production environment.
+
+Buliding image is easy while all necessary configurations are written in Dockerfile.
+You can just issue `docker build --tag <IMAGE_NAME> . --no-cache` command to build image.
 
 ## Deploy to Kubernetes
 
-Before deploying to Kubernetes, you need to configure namespace and secrets for No-IP DUC pod.
+Before deploying No-IP DUC to Kubernetes, you need to create namespace and secrets for No-IP DUC pod first.
 
 ### Create namespace
 
-  > You can edit and use `prepare.yaml` to create namespace and secret in kubernetes folder directly.
+> You can simply edit and use `prepare.yaml` to create namespace and secret in `.kubernetes` directory.
 
-  Create namespace by issue `kubectl create ns <NAMESPACE>` command or use the yaml content below.
+Namespace can be created by issuing `kubectl create ns <NAMESPACE>` command or save the contents below as a yaml file and apply it with command `kubectl apply -f <YAML_FILE_NAME>`.
 
-  ```yaml
-  # namespace.yaml
-  apiVersion: v1
-  kind: Namespace
-  metadata:
-    name: <NAMESPACE_NAME>
-  ```
+```yaml
+# namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: <NAMESPACE_NAME>
+```
 
 ### Create secrets
 
-  > You can edit and use `prepare.yaml` to create namespace and secret in kubernetes folder directly.
+> You can simply edit and use `prepare.yaml` to create namespace and secret in `.kubernetes` directory.
 
-  No-IP DUC needs your username, password and domain to run, so you need to create a secret to define these values for No-IP DUC.
+To run No-IP DUC, you need to provide these required parameters lists below:
 
-  > Note: If you have multiple domains, split it in comma.
+- username
+- password
+- domain name
 
-  ```yaml
-  # duc-secrets.yaml
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: <SECRET_NAME>
-    namespace: <NAMESPACE_CREATED_ABOVE>
-  type: Opaque
-  data:
-    username: <UERNAME_ON_NOIP>
-    password: <PASSWWORD_ON_NOIP>
-    domains: <DOMAIN_TO_SYNC>
-  ```
+You can create a secret to store these values.
+
+> [!NOTE]
+> If you have multiple domain names, split domain names with comma.
+
+```yaml
+# duc-secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <SECRET_NAME>
+  namespace: <NAMESPACE_CREATED_ABOVE>
+type: Opaque
+data:
+  username: <UERNAME_ON_NOIP>
+  password: <PASSWWORD_ON_NOIP>
+  domains: <DOMAIN_TO_SYNC>
+```
 
 ### Edit deployment file
 
-  Deployment file is located in `.kubernetes` folder. You need to edit some values in that file to match the right value.
+Deployment file is located in `.kubernetes` directory. You need to change values, which with uppercase alphabets and underscores, to the correct values in the file.
 
-  After you edited, issue `kubectl apply -f deployment.yaml` to deploy to Kubernetes.
+After it, issue `kubectl apply -f deployment.yaml` command to deploy No-IP DUC to Kubernetes.
 
 ### Using GitHub Actions
 
-  Before you use GitHub Actions to deploy your No-IP DUC, you need to edit `production.yml` in `.github/workflows` folder first.
-  Set all secrets and vars which declares in yaml file into repository secrets and vars on GitHub.
-  And change all values with upper case alphabets between `<` and `>` to correct value.
+Before using GitHub Actions, you need to modify `production.yml` in `.github/workflows` directory first.
 
-  > Don't forget to uncomment at least one block on `on` block.
+Find out all vars and secrets in the yaml file, and set these values under GitHub repository vars and secrets.
+> `Vars` are start with `vars.` prefix, and `secrets` are start with `secret.` prefix.
 
-  When these are finished, you can do git commit and git push to run deployment.
+And change all values with uppercase alphabets between `<` and `>` to correct value.
+
+> Don't forget to uncomment at least one block on `on` block.
+
+When these steps are finished, you can commit and push the repository to GitHub to start deployment flow.
 
 ## Update No-IP DUC client version
 
-  > Note: No-IP DUC version 2.x, which is known as stable version, is incompatible with 3.x configurations.
+> [!NOTE]
+> No-IP DUC version 2.x, which is known as stable version, is incompatible with 3.x configurations.
 
-  To update No-IP DUC client, you just need to do below three steps:
+To update No-IP DUC client, simply follow these three steps below:
 
-  1. Change the download url in `Dockerfile` to newer version.
-  2. Build the image.
-  3. Deploy to Kubernetes and done.
+1. Change the download url in `Dockerfile` to a newer version.
+2. Build the image.
+3. Deploy to Kubernetes, that's all.
 
 ## Update configurations
 
-  To update configurations, just edit secrets and restart the pod.
+To update the configurations, simply change the values in secrets and restart the pod, that's all.
 
 ## References
 
